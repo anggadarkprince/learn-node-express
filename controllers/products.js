@@ -17,14 +17,15 @@ const postAddProduct = (req, res) => {
 };
 
 const getAllProducts = (req, res) => {
-    const products = Product.fetchAll();
-    res.render('shop', {
-        products: products,
-        title: 'Admin Product',
-        hasProducts: products.length > 0,
-        activeShop: true,
-        productCSS: true,
-        path: '/'
+    Product.fetchAll((products) => {
+        res.render('shop', {
+            products: products,
+            title: 'Admin Product',
+            hasProducts: products.length > 0,
+            activeShop: true,
+            productCSS: true,
+            path: '/'
+        });
     });
 };
 
