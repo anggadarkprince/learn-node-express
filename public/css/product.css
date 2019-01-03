@@ -1,0 +1,33 @@
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.product-item {
+    flex-basis: 300px;
+    padding: 15px;
+    border: 1px solid #dfdfdf;
+    margin: 0 10px 20px;
+    /*flex-grow: 1;*/
+    flex-shrink: 1;
+}
+
+.product-item img {
+    max-width: 100%;
+}
+
+.product__title {
+    font-size: 1.2rem;
+    margin-top: 0;
+    text-transform: capitalize;
+}
+
+.product__price {
+    color: #4d4d4d;
+    margin-bottom: 0.5rem;
+}
+
+.product__description {
+    font-size: 14px;
+}
