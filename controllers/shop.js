@@ -10,6 +10,17 @@ const getAllProducts = (req, res) => {
     });
 };
 
+const getProduct = (req, res) => {
+    const productId = req.params.productId;
+    Product.findById(productId, (product) => {
+        res.render('shop/product-detail', {
+            product: product,
+            title: 'Product Detail',
+            path: '/products'
+        });
+    });
+};
+
 const getIndex = (req, res, next) => {
     Product.fetchAll((products) => {
         res.render('shop/index', {
@@ -25,6 +36,11 @@ const getCart = (req, res, next) => {
         title: 'Your Cart',
         path: '/cart'
     });
+};
+
+const postCart = (req, res, next) => {
+    const productId = req.body.productId;
+    return redirect('/cart');
 };
 
 const getCheckout = (req, res, next) => {
@@ -45,7 +61,9 @@ const getOrders = (req, res, next) => {
 module.exports = {
     getIndex: getIndex,
     getAllProducts: getAllProducts,
+    getProduct: getProduct,
     getCart: getCart,
+    postCart: postCart,
     getCheckout: getCheckout,
     getOrders: getOrders
 };

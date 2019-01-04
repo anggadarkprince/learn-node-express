@@ -4,6 +4,10 @@
     margin: 0 -10px;
 }
 
+.centered {
+    text-align: center;
+}
+
 .product-item {
     flex-basis: 350px;
     padding: 15px;
