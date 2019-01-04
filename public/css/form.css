@@ -15,19 +15,19 @@
 }
 
 .form-control label,
-.form-control input {
+.form-control input, .form-control textarea {
     display: block;
     width: 100%;
 }
 
-.form-control input {
+.form-control input, .form-control textarea {
     border: 1px solid #88939c;
     font: inherit;
     border-radius: 2px;
     padding: 5px 10px;
 }
 
-button {
+button, .btn {
     font: inherit;
     border: 1px solid #3e00a1;
     color: #3e00a1;
@@ -35,10 +35,15 @@ button {
     border-radius: 3px;
     cursor: pointer;
     padding: 5px 10px;
+    text-decoration: none;
 }
 
-button:hover,
-button:active {
+.btn + form {
+    display: inline-block;
+}
+
+button:hover, .btn:hover,
+button:active, .btn:active {
     background-color: #3e00a1;
     color: white;
 }

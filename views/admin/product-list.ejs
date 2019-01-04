@@ -2,4 +2,33 @@
 
 <h3>Admin Products</h3>
 
+<% if(products.length > 0) { %>
+<div class="grid">
+    <% for (let product of products) { %>
+    <article class="card product-item">
+        <header class="card__header">
+            <h1 class="product__title"><%= product.title %></h1>
+        </header>
+        <div class="card__image">
+            <img src="<%= product.imageUrl %>" alt="A Book">
+        </div>
+        <div class="card__content">
+            <h2 class="product__price">$<%= product.price %></h2>
+            <p class="product__description">
+                <%= product.description %>
+            </p>
+        </div>
+        <div class="card__actions">
+            <a href="/admin/product/edit" class="btn">Edit</a>
+            <form action="/admin/product/delete" method="post">
+                <button class="btn" type="submit">Delete</button>
+            </form>
+        </div>
+    </article>
+    <% } %>
+</div>
+<% } else { %>
+<p>No Products Found!</p>
+<% } %>
+
 <%- include('../components/footer') %>
