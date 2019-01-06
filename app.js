@@ -6,6 +6,10 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 const errorController = require('./controllers/error');
+const Product = require('./models/product');
+const User = require('./models/user');
+
+const db = require('./utils/database');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -18,8 +22,37 @@ app.use((req, res, next) => {
     next();
 });
 
+// executed when request is coming
+app.use((req, res, next) => {
+    User.findByPk(1)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(console.log);
+});
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-app.listen(3000);
+Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
+User.hasMany(Product);
+
+// execute when server started
+db.sync()
+    .then(result => User.findByPk(1))
+    .then(user => {
+        if (!user) {
+            return User.create({
+                name: 'Angga',
+                email: 'angga@mail.com',
+                password: 'secret'
+            });
+        }
+        return Promise.resolve(user);
+    })
+    .then(user => {
+        console.log(user);
+        app.listen(3000);
+    })
+    .catch(console.log);

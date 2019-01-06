@@ -2,34 +2,40 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 const getAllProducts = (req, res) => {
-    Product.fetchAll((products) => {
-        res.render('shop/product-list', {
-            products: products,
-            title: 'All Products',
-            path: '/products'
-        });
-    });
+    Product.findAll()
+        .then(products => {
+            res.render('shop/product-list', {
+                products: products,
+                title: 'All Products',
+                path: '/products'
+            });
+        })
+        .catch(console.log);
 };
 
 const getProduct = (req, res) => {
     const productId = req.params.productId;
-    Product.findById(productId, (product) => {
-        res.render('shop/product-detail', {
-            product: product,
-            title: 'Product Detail',
-            path: '/products'
-        });
-    });
+    Product.findByPk(productId)
+        .then(product => {
+            res.render('shop/product-detail', {
+                product: product,
+                title: product.title,
+                path: '/products'
+            });
+        })
+        .catch(console.log);
 };
 
-const getIndex = (req, res, next) => {
-    Product.fetchAll((products) => {
-        res.render('shop/index', {
-            products: products,
-            title: 'Shop',
-            path: '/'
-        });
-    });
+const getIndex = (req, res) => {
+    Product.findAll()
+        .then(products => {
+            res.render('shop/index', {
+                products: products,
+                title: 'Shop',
+                path: '/'
+            });
+        })
+        .catch(console.log);
 };
 
 const getCart = (req, res) => {
@@ -63,7 +69,6 @@ const postCart = (req, res) => {
 
 const postCartDelete = (req, res) => {
     const productId = req.body.productId;
-    console.log(productId);
     Product.findById(productId, product => {
         if (product) {
             Cart.delete(productId, product.price);
