@@ -11,7 +11,7 @@ const pathFile = path.join(
 const getProductFromFile = (callback) => {
     fs.readFile(pathFile, (err, data) => {
         if (err) {
-            fs.writeFile(pathFile, JSON.stringify([]), err => console.log(err));
+            fs.writeFileSync(pathFile, JSON.stringify([]), err => console.log(err));
             callback([]);
         } else {
             callback(JSON.parse(data));
