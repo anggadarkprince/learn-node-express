@@ -2,4 +2,21 @@
 
 <h3>Cart</h3>
 
+<% if(cart.products.length > 0) { %>
+    <ul>
+        <% cart.products.forEach(product => { %>
+        <li>
+            <p><%= product.title %> (Amount: <%= product.qty %> x <%= product.price %>)</p>
+            <form action="/cart-delete-item" method="post">
+                <input type="hidden" name="productId" value="<%= product.id %>">
+                <button type="submit" class="btn">DELETE</button>
+            </form>
+        </li>
+        <% }) %>
+    </ul>
+    <p><strong>Total: <%= cart.total %></strong></p>
+<% } else { %>
+    <p>No products in cart</p>
+<% } %>
+
 <%- include('../components/footer') %>

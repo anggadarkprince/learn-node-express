@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js --ignore './data/'"
   },
   "keywords": [
     "node",
@@ -17,7 +17,7 @@
   "author": "Angga Ari Wijaya",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.18.7"
+    "nodemon": "^1.18.9"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
