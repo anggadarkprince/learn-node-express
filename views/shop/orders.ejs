@@ -2,5 +2,21 @@
 
 <h1>My Orders</h1>
 
+<% if(orders.length > 0) { %>
+    <ul>
+        <% orders.forEach(order => { %>
+            <li>
+                <h4># <%= order.id %></h4>
+                <ul>
+                    <% order.products.forEach(item => { %>
+                        <li><%= item.title %> (<%= item.orderItem.quantity %>)</li>
+                    <% }) %>
+                </ul>
+            </li>
+        <% }) %>
+    </ul>
+<% } else { %>
+    <p>No order available</p>
+<% } %>
 
 <%- include('../components/footer') %>

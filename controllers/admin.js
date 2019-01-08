@@ -11,11 +11,25 @@ const getAddProduct = (req, res) => {
 
 const postAddProduct = (req, res) => {
     const {title, image: imageUrl, price, description} = req.body;
-    Product.create({title, imageUrl, price, description})
+    req.user.createProduct({
+        title, imageUrl, price, description,
+        userId: req.user.id
+    })
+    .then(() => {
+        res.redirect('/admin/products');
+    })
+    .catch(console.log);
+    
+    /*
+    Product.create({
+        title, imageUrl, price, description,
+        userId: req.user.id
+    })
         .then(() => {
             res.redirect('/admin/products');
         })
         .catch(console.log);
+    */
 };
 
 const getEditProduct = (req, res) => {
@@ -23,12 +37,13 @@ const getEditProduct = (req, res) => {
     if (!editMode) {
         res.redirect('/');
     }
-    Product.findByPk(req.params.productId)
+    req.user.getProducts({where: {id: req.params.productId}})
+    //Product.findByPk(req.params.productId)
         .then(product => {
             res.render('admin/form-product', {
                 title: 'Edit Product',
                 path: '/admin/products',
-                product: product,
+                product: product[0],
                 editing: editMode
             });
         })
@@ -64,7 +79,8 @@ const postDeleteProduct = (req, res) => {
 }
 
 const getAllProducts = (req, res) => {
-    Product.findAll()
+    req.user.getProducts()
+    //Product.findAll()
         .then(products => {
             res.render('admin/product-list', {
                 products: products,
