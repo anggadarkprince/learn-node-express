@@ -4,6 +4,7 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const bodyParser = require('body-parser');
 const path = require('path');
 
+const authMiddleware = require('./middleware/auth');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
@@ -43,7 +44,7 @@ app.use((req, res, next) => {
         })
         .catch(console.log);
 });
-app.use('/admin', adminRoutes);
+app.use('/admin', authMiddleware, adminRoutes);
 app.use(authRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
@@ -51,21 +52,6 @@ app.use(errorController.get404);
 mongoose.set('debug', true); // logging to console
 mongoose.connect(MONGODB_URI, {useNewUrlParser: true})
     .then(() => {
-        // seed sample data
-        User.findOne().then(user => {
-            if (!user) {
-                const user = new User({
-                    name: 'Angga Ari Wijaya',
-                    email: 'angga@mail.com',
-                    password: 'secret',
-                    cart: {
-                        items: []
-                    }
-                });
-                user.save();
-            }
-        });
-
         app.listen(3000);
     })
     .catch(console.log);
