@@ -29,13 +29,13 @@ const getProduct = (req, res) => {
 };
 
 const getIndex = (req, res) => {
-    Product.find()
+    Product.find().populate('userId', 'name')
         .then(products => {
+            console.log(products);
             res.render('shop/index', {
                 products: products,
                 title: 'Shop',
-                path: '/',
-                isAuthenticated: req.session.isLoggedIn
+                path: '/'
             });
         })
         .catch(console.log);
@@ -49,8 +49,7 @@ const getCart = (req, res) => {
             res.render('shop/cart', {
                 title: 'Your Cart',
                 path: '/cart',
-                products: user.cart.items,
-                isAuthenticated: req.session.isLoggedIn
+                products: user.cart.items
             });
         })
         .catch(console.log);
@@ -77,20 +76,19 @@ const postCartDelete = (req, res) => {
         .catch(console.log);
 }
 
-const getOrders = (req, res, next) => {
+const getOrders = (req, res) => {
     Order.find({"user.userId": req.user._id})
         .then(orders => {
             res.render('shop/orders', {
                 title: 'Your Orders',
                 path: '/orders',
-                orders: orders,
-                isAuthenticated: req.session.isLoggedIn
+                orders: orders
             });
         })
         .catch(console.log);
 };
 
-const postOrders = (req, res, next) => {
+const postOrders = (req, res) => {
     req.user.populate('cart.items.productId')
         .execPopulate()
         .then(user => {

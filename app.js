@@ -1,8 +1,10 @@
 const express = require('express');
 const session = require('express-session');
+const flash = require('connect-flash');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const bodyParser = require('body-parser');
 const path = require('path');
+const csrf = require('csurf');
 
 const authMiddleware = require('./middleware/auth');
 const adminRoutes = require('./routes/admin');
@@ -18,6 +20,7 @@ const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
 });
+const csrfProtection = csrf();
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -26,6 +29,8 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret: 'secret98sh968sdf7s8df6', resave: false, saveUninitialized: false, store: store}));
+app.use(flash());
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
     console.log('Logging all request');
@@ -44,6 +49,13 @@ app.use((req, res, next) => {
         })
         .catch(console.log);
 });
+
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+})
+
 app.use('/admin', authMiddleware, adminRoutes);
 app.use(authRoutes);
 app.use(shopRoutes);

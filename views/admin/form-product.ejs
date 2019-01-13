@@ -1,5 +1,6 @@
 <%- include('../components/header') %>
     <form action="/admin/<%= editing ? 'product/edit/' + product.id : 'products' %>" method="post" class="product-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <h3><%= editing ? 'Edit' : 'Create' %> Product</h3>
         <div class="form-control">
             <label for="title">Product Title</label>

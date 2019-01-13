@@ -5,15 +5,24 @@ const getSignup = (req, res, next) => {
     res.render('auth/signup', {
         path: '/signup',
         title: 'Signup',
-        isAuthenticated: false
+        errorMessage: req.flash('error')
     });
 };
 
 const postSignup = (req, res) => {
-    const {name, email, password} = req.body;
+    const {name, email, password, confirmPassword} = req.body;
+    if (!name && !email) {
+        req.flash('error', 'User data is required');
+        return res.redirect('/signup');
+    }
+    if(password != confirmPassword) {
+        req.flash('error', 'Password is mismatch');
+        return res.redirect('/signup');
+    }
     User.findOne({email: email})
         .then(existUser => {
             if (existUser) {
+                req.flash('error', 'User already exist');
                 return res.redirect('/signup');
             }
             bcrypt.hash(password, 12)
@@ -22,6 +31,7 @@ const postSignup = (req, res) => {
                     return user.save();
                 })
                 .then(result => {
+                    req.flash('success', 'You are registered!');
                     res.redirect('/login');
                 });
         })
@@ -37,7 +47,8 @@ const getLogin = (req, res) => {
     res.render('auth/login', {
         path: '/login',
         title: 'Login',
-        isAuthenticated: req.session.isLoggedIn
+        errorMessage: req.flash('error'),
+        successMessage: req.flash('success')
     })
 };
 
@@ -46,6 +57,7 @@ const postLogin = (req, res) => {
     User.findOne({email: req.body.email})
         .then(user => {
             if (!user) {
+                req.flash('error', 'Invalid email address');
                 return res.redirect('/login');
             }
             bcrypt.compare(req.body.password, user.password)
@@ -59,6 +71,7 @@ const postLogin = (req, res) => {
                             return res.redirect('/');
                         });
                     } else {
+                        req.flash('error', 'Invalid credentials, try again!');
                         res.redirect('/login');
                     }
                 })

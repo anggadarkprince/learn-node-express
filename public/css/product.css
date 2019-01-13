@@ -30,19 +30,30 @@
     }
 }
 
+.card__image {
+    margin-bottom: 10px;
+    min-height: 50px;
+    background-color: #f3f3f3;
+}
+
 .product-item img {
     max-width: 100%;
 }
 
 .product__title {
     font-size: 1.2rem;
-    margin-top: 0;
+    margin-bottom: 0;
     text-transform: capitalize;
 }
 
+.product__subtitle {
+    color: #88939c;
+    font-size: 14px;
+}
+
 .product__price {
-    color: #4d4d4d;
     margin-bottom: 0.5rem;
+    font-weight: normal;
 }
 
 .product__description {

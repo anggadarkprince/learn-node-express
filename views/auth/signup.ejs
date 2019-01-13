@@ -1,7 +1,9 @@
 <%- include('../components/header') %>
 
 <form class="login-form" action="/signup" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <h3>Register</h3>
+    <%- include('../components/alert') %>
     <div class="form-control">
         <label for="name">Name</label>
         <input type="text" name="name" id="name" placeholder="Your full name" maxlength="50">

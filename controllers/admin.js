@@ -5,8 +5,7 @@ const getAddProduct = (req, res) => {
         title: 'Create New Product',
         path: '/admin/products/add',
         product: {id: '', title: '', imageUrl: '', price: '', description: ''},
-        editing: false,
-        isAuthenticated: req.session.isLoggedIn
+        editing: false
     });
 };
 
@@ -15,6 +14,7 @@ const postAddProduct = (req, res) => {
     const product = new Product({title, imageUrl, price, description, userId: req.user._id});
     product.save()
         .then(result => {
+            req.flash('success', 'Product successfully added');
             res.redirect('/admin/products')
         })
         .catch(console.log);
@@ -31,8 +31,7 @@ const getEditProduct = (req, res) => {
                 title: 'Edit Product',
                 path: '/admin/products',
                 product: product,
-                editing: editMode,
-                isAuthenticated: req.session.isLoggedIn
+                editing: editMode
             });
         })
         .catch(console.log);
@@ -51,6 +50,7 @@ const postEditProduct = (req, res) => {
             return product.save();
         })
         .then(result => {
+            req.flash('success', 'Product successfully updated');
             return res.redirect('/admin/products');
         })
         .catch(console.log);
@@ -67,7 +67,7 @@ const postDeleteProduct = (req, res) => {
 }
 
 const getAllProducts = (req, res) => {
-    Product.find()
+    Product.find({"userId": req.user._id})
         .select('_id title price imageUrl description')
         .populate('userId', 'name')
         .then(products => {
@@ -75,7 +75,8 @@ const getAllProducts = (req, res) => {
                 products: products,
                 title: 'Admin Products',
                 path: '/admin/products',
-                isAuthenticated: req.session.isLoggedIn
+                errorMessage: req.flash('error'),
+                successMessage: req.flash('success')
             });
         })
         .catch(console.log);
