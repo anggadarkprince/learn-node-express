@@ -5,7 +5,8 @@ const getAddProduct = (req, res) => {
         title: 'Create New Product',
         path: '/admin/products/add',
         product: {id: '', title: '', imageUrl: '', price: '', description: ''},
-        editing: false
+        editing: false,
+        isAuthenticated: req.session.isLoggedIn
     });
 };
 
@@ -30,7 +31,8 @@ const getEditProduct = (req, res) => {
                 title: 'Edit Product',
                 path: '/admin/products',
                 product: product,
-                editing: editMode
+                editing: editMode,
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(console.log);
@@ -72,7 +74,8 @@ const getAllProducts = (req, res) => {
             res.render('admin/product-list', {
                 products: products,
                 title: 'Admin Products',
-                path: '/admin/products'
+                path: '/admin/products',
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(console.log);

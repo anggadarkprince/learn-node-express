@@ -7,7 +7,8 @@ const getAllProducts = (req, res) => {
             res.render('shop/product-list', {
                 products: products,
                 title: 'All Products',
-                path: '/products'
+                path: '/products',
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(console.log);
@@ -20,7 +21,8 @@ const getProduct = (req, res) => {
             res.render('shop/product-detail', {
                 product: product,
                 title: product.title,
-                path: '/products'
+                path: '/products',
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(console.log);
@@ -32,7 +34,8 @@ const getIndex = (req, res) => {
             res.render('shop/index', {
                 products: products,
                 title: 'Shop',
-                path: '/'
+                path: '/',
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(console.log);
@@ -46,7 +49,8 @@ const getCart = (req, res) => {
             res.render('shop/cart', {
                 title: 'Your Cart',
                 path: '/cart',
-                products: user.cart.items
+                products: user.cart.items,
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(console.log);
@@ -59,7 +63,6 @@ const postCart = (req, res) => {
             return req.user.addToCart(product);
         })
         .then(result => {
-            console.log(result);
             res.redirect('/cart');
         })
         .catch(console.log);
@@ -80,7 +83,8 @@ const getOrders = (req, res, next) => {
             res.render('shop/orders', {
                 title: 'Your Orders',
                 path: '/orders',
-                orders: orders
+                orders: orders,
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(console.log);

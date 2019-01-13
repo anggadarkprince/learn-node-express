@@ -1,0 +1,15 @@
+<%- include('../components/header') %>
+<form action="/login" method="post" class="login-form">
+    <h3>Sign In</h3>
+    <div class="form-control">
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" placeholder="Your email address" maxlength="50">
+    </div>
+    <div class="form-control">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Your password" maxlength="50">
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+<%- include('../components/footer') %>
