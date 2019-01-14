@@ -5,34 +5,34 @@
 <%- include('../components/alert') %>
 
 <% if(products.length > 0) { %>
-<div class="grid">
-    <% for (let product of products) { %>
-    <article class="card product-item">
-        <div class="card__image">
-            <img src="<%= product.imageUrl %>" alt="A Book">
-        </div>
-        <header class="card__header">
-            <h1 class="product__title"><%= product.title %></h1>
-        </header>
-        <div class="card__content">
-            <h2 class="product__price">$<%= product.price %></h2>
-            <p class="product__description">
-                <%= product.description %>
-            </p>
-        </div>
-        <div class="card__actions">
-            <a href="/product/<%= product.id %>" class="btn">Detail</a>
-            <a href="/admin/product/edit/<%= product.id %>?edit=true" class="btn">Edit</a>
-            <form action="/admin/product/delete/<%= product.id %>" method="post">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button class="btn" type="submit">Delete</button>
-            </form>
-        </div>
-    </article>
-    <% } %>
-</div>
+    <div class="grid">
+        <% for (let product of products) { %>
+        <article class="card product-item">
+            <div class="card__image">
+                <img src="<%= product.imageUrl %>" alt="Image of product">
+            </div>
+            <header class="card__header">
+                <h1 class="product__title"><%= product.title %></h1>
+            </header>
+            <div class="card__content">
+                <h2 class="product__price">$<%= product.price %></h2>
+                <p class="product__description">
+                    <%= product.description %>
+                </p>
+            </div>
+            <div class="card__actions">
+                <a href="/product/<%= product.id %>" class="btn">Detail</a>
+                <a href="/admin/product/edit/<%= product.id %>?edit=true" class="btn">Edit</a>
+                <form action="/admin/product/delete/<%= product.id %>" method="post">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn" type="submit">Delete</button>
+                </form>
+            </div>
+        </article>
+        <% } %>
+    </div>
 <% } else { %>
-<p>No Products Found!</p>
+    <p>No Products Found!</p>
 <% } %>
 
 <%- include('../components/footer') %>

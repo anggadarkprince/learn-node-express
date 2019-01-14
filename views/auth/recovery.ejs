@@ -1,0 +1,20 @@
+<%- include('../components/header') %>
+
+<form action="/recovery" method="post" class="login-form">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="id" value="<%= userId %>">
+    <input type="hidden" name="token" value="<%= token %>">
+    <h3>Password Recovery</h3>
+    <%- include('../components/alert') %>
+    <div class="form-control">
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" readonly value="<%= email %>">
+    </div>
+    <div class="form-control">
+        <label for="password">New Password</label>
+        <input type="password" id="password" name="password" placeholder="Your new password" maxlength="50">
+    </div>
+    <button type="submit">Update Password</button>
+</form>
+
+<%- include('../components/footer') %>

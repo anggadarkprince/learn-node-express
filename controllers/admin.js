@@ -21,12 +21,17 @@ const postAddProduct = (req, res) => {
 };
 
 const getEditProduct = (req, res) => {
+    const id = req.params.productId;
     const editMode = req.query.edit;
     if (!editMode) {
         res.redirect('/');
     }
-    Product.findById(req.params.productId)
+    Product.findOne({_id: id, userId: req.user._id})
         .then(product => {
+            if(!product) {
+                req.flash('error', 'Product not found!');
+                return res.redirect('/admin/products')
+            }
             res.render('admin/form-product', {
                 title: 'Edit Product',
                 path: '/admin/products',
@@ -41,7 +46,7 @@ const postEditProduct = (req, res) => {
     const id = req.params.productId;
     const {title, image, price, description} = req.body;
 
-    Product.findById(id)
+    Product.findOne({_id: id, userId: req.user._id})
         .then(product => {
             product.title = title;
             product.imageUrl = image;
@@ -58,7 +63,7 @@ const postEditProduct = (req, res) => {
 
 const postDeleteProduct = (req, res) => {
     const id = req.params.productId;
-    Product.findById(id)
+    Product.findOne({_id: id, userId: req.user._id})
         .then(product => product.remove())
         .then(result => {
             return res.redirect('/admin/products');
@@ -67,7 +72,7 @@ const postDeleteProduct = (req, res) => {
 }
 
 const getAllProducts = (req, res) => {
-    Product.find({"userId": req.user._id})
+    Product.find({userId: req.user._id})
         .select('_id title price imageUrl description')
         .populate('userId', 'name')
         .then(products => {

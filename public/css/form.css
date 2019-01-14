@@ -20,6 +20,13 @@
     width: 100%;
 }
 
+.form-control input[readonly],
+.form-control textarea[readonly] {
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
 .form-control input, .form-control textarea {
     border: 1px solid #88939c;
     font: inherit;
@@ -40,6 +47,11 @@ button, .btn {
 
 .btn + form {
     display: inline-block;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
 }
 
 button:hover, .btn:hover,
