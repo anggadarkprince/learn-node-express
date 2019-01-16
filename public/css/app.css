@@ -156,6 +156,10 @@ ul {
     margin-bottom: 15px;
 }
 
+.alert p {
+    margin-bottom: 0;
+}
+
 .alert--error {
     color: #b13d3b;
     background-color: #f0ddda;
