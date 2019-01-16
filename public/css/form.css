@@ -8,6 +8,14 @@
     margin: 1rem 0;
 }
 
+.form-control.error label {
+    color: #b13d3b;
+}
+
+.form-control.error input, .form-control.error textarea {
+    border-color: #b13d3b;
+}
+
 .form-control label {
     margin-bottom: 5px;
     font-weight: bold;

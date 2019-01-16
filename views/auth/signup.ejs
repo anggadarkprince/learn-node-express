@@ -4,19 +4,21 @@
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <h3>Register</h3>
     <%- include('../components/alert') %>
-    <div class="form-control">
+    <div class="form-control <%= errorMessage.find(e => e.param === 'name') ? 'error' : '' %>">
         <label for="name">Name</label>
-        <input type="text" name="name" id="name" placeholder="Your full name" maxlength="50">
+        <input type="text" name="name" id="name" value="<%= oldInput.name || '' %>"
+               placeholder="Your full name" maxlength="50">
     </div>
-    <div class="form-control">
+    <div class="form-control <%= errorMessage.find(e => e.param === 'email') ? 'error' : '' %>">
         <label for="email">E-Mail</label>
-        <input type="email" name="email" id="email" placeholder="Email address" maxlength="50">
+        <input type="email" name="email" id="email" value="<%= oldInput.email || '' %>"
+               placeholder="Email address" maxlength="50">
     </div>
-    <div class="form-control">
+    <div class="form-control <%= errorMessage.find(e => e.param === 'password') ? 'error' : '' %>">
         <label for="password">Password</label>
         <input type="password" name="password" id="password" placeholder="Pick a password" maxlength="50">
     </div>
-    <div class="form-control">
+    <div class="form-control <%= errorMessage.find(e => e.param === 'confirmPassword') ? 'error' : '' %>">
         <label for="confirmPassword">Confirm Password</label>
         <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Repeat your password" maxlength="50">
     </div>

@@ -9,56 +9,44 @@ const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
         api_key: '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'
     }
-}))
+}));
 
 const getSignup = (req, res, next) => {
     res.render('auth/signup', {
         path: '/signup',
         title: 'Signup',
-        errorMessage: req.flash('error')
+        errorMessage: req.flash('error'),
+        oldInput: {}
     });
 };
 
 const postSignup = (req, res) => {
-    const {name, email, password, confirmPassword} = req.body;
-    if (!name && !email) {
-        req.flash('error', 'User data is required');
-        return res.redirect('/signup');
-    }
-    if (password != confirmPassword) {
-        req.flash('error', 'Password is mismatch');
-        return res.redirect('/signup');
-    }
+    const {name, email, password} = req.body;
+
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(422).render('auth/signup', {
             path: '/signup',
             title: 'Signup',
-            errorMessage: errors.array()
+            errorMessage: errors.array(),
+            oldInput: {name, email}
         });
     }
-    User.findOne({email: email})
-        .then(existUser => {
-            if (existUser) {
-                req.flash('error', 'User already exist');
-                return res.redirect('/signup');
-            }
-            bcrypt.hash(password, 12)
-                .then(hashedPassword => {
-                    const user = new User({name, email, password: hashedPassword, cart: {items: []}});
-                    return user.save();
-                })
-                .then(() => {
-                    req.flash('success', 'You are registered!');
-                    res.redirect('/login');
-                    return transporter.sendMail({
-                        to: `"${name}" <${email}>`,
-                        from: `"Express Shop" <no-reply@express-shop.app>`,
-                        subject: 'Welcome Aboard!',
-                        html: `<h3>Hi ${name}, you are successfully signed up!</h3>`
-                    });
-                })
-                .catch(console.log);
+
+    bcrypt.hash(password, 12)
+        .then(hashedPassword => {
+            const user = new User({name, email, password: hashedPassword, cart: {items: []}});
+            return user.save();
+        })
+        .then(() => {
+            req.flash('success', 'You are registered!');
+            res.redirect('/login');
+            return transporter.sendMail({
+                to: `"${name}" <${email}>`,
+                from: `"Express Shop" <no-reply@express-shop.app>`,
+                subject: 'Welcome Aboard!',
+                html: `<h3>Hi ${name}, you are successfully signed up!</h3>`
+            });
         })
         .catch(console.log);
 };
@@ -73,12 +61,24 @@ const getLogin = (req, res) => {
         path: '/login',
         title: 'Login',
         errorMessage: req.flash('error'),
-        successMessage: req.flash('success')
+        successMessage: req.flash('success'),
+        oldInput: {}
     });
 };
 
 const postLogin = (req, res) => {
     //res.setHeader('Set-Cookie', 'loggedIn=true; Max-Age=1000; HttpOnly');
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(422).render('auth/login', {
+            path: '/login',
+            title: 'Login',
+            errorMessage: errors.array(),
+            oldInput: {email: req.body.email}
+        });
+    }
+
     User.findOne({email: req.body.email})
         .then(user => {
             if (!user) {
@@ -198,7 +198,7 @@ const postRecovery = (req, res) => {
                 .catch(console.log);
         })
         .catch(console.log);
-}
+};
 
 module.exports = {
     getSignup: getSignup,
@@ -210,4 +210,4 @@ module.exports = {
     postReset: postReset,
     getRecovery: getRecovery,
     postRecovery: postRecovery,
-}
+};

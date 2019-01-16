@@ -1,16 +1,32 @@
 const Product = require('../models/product');
+const {validationResult} = require('express-validator/check');
 
 const getAddProduct = (req, res) => {
     res.render('admin/form-product', {
         title: 'Create New Product',
         path: '/admin/products/add',
         product: {id: '', title: '', imageUrl: '', price: '', description: ''},
-        editing: false
+        editing: false,
+        errorMessage: req.flash('error'),
+        oldInput: {}
     });
 };
 
 const postAddProduct = (req, res) => {
     const {title, image: imageUrl, price, description} = req.body;
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(422).render('admin/form-product', {
+            title: 'Create New Product',
+            path: '/admin/products/add',
+            product: {id: '', title: '', imageUrl: '', price: '', description: ''},
+            editing: false,
+            errorMessage: errors.array(),
+            oldInput: req.body
+        });
+    }
+
     const product = new Product({title, imageUrl, price, description, userId: req.user._id});
     product.save()
         .then(result => {
@@ -36,7 +52,9 @@ const getEditProduct = (req, res) => {
                 title: 'Edit Product',
                 path: '/admin/products',
                 product: product,
-                editing: editMode
+                editing: editMode,
+                errorMessage: req.flash('error'),
+                oldInput: {}
             });
         })
         .catch(console.log);
@@ -45,6 +63,18 @@ const getEditProduct = (req, res) => {
 const postEditProduct = (req, res) => {
     const id = req.params.productId;
     const {title, image, price, description} = req.body;
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(422).render('admin/form-product', {
+            title: 'Edit Product',
+            path: '/admin/products',
+            product: {id: '', title: '', imageUrl: '', price: '', description: ''},
+            editing: true,
+            errorMessage: errors.array(),
+            oldInput: req.body
+        });
+    }
 
     Product.findOne({_id: id, userId: req.user._id})
         .then(product => {
