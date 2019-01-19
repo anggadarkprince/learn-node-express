@@ -56,10 +56,14 @@ app.use((req, res, next) => {
     next();
 })
 
+app.get('/500', errorController.get500);
 app.use('/admin', authMiddleware, adminRoutes);
 app.use(authRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
+app.use((error, req, res, next) => {
+    res.status(500).render('500', {title: 'Internal server error', path: '/500'});
+});
 
 mongoose.set('debug', true); // logging to console
 mongoose.connect(MONGODB_URI, {useNewUrlParser: true})
