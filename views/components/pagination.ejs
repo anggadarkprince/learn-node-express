@@ -1,0 +1,22 @@
+<div class="pagination">
+    <span>
+        Showing <%= entity.data.length %> product of <%= entity.totalProducts %>
+    </span>
+    <div>
+        <% if(entity.hasPrevPage) { %>
+            <a href="?page=<%= entity.prevPage %>">
+                Prev
+            </a>
+        <% } %>
+        <% for (let i = 1; i <= entity.lastPage; i++) { %>
+            <a href="?page=<%= i %>" <%- entity.currentPage == i ? 'class="active"' : '' %>>
+                <%= i %>
+            </a>
+        <% } %>
+        <% if(entity.hasNextPage) { %>
+            <a href="?page=<%= entity.nextPage %>">
+                Next
+            </a>
+        <% } %>
+    </div>
+</div>

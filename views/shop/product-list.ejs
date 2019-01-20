@@ -2,9 +2,9 @@
 
     <h3>Products</h3>
 
-    <% if(products.length > 0) { %>
+    <% if(products.data.length > 0) { %>
         <div class="grid">
-            <% for (let product of products) { %>
+            <% for (let product of products.data) { %>
                 <article class="card product-item">
                     <div class="card__image">
                         <img src="/<%= product.imageUrl %>" alt="A Book">
@@ -27,6 +27,7 @@
                 </article>
             <% } %>
         </div>
+    <%- include('../components/pagination', {entity: products}) %>
     <% } else { %>
         <p>No Products Found!</p>
     <% } %>

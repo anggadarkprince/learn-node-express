@@ -170,3 +170,29 @@ ul {
     background-color: #b9f0c6;
     border: 1px solid #aee2ba;
 }
+
+.pagination {
+    margin-top: 2rem;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid #4f10b0;
+    margin: 0 0.1rem;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active {
+    background-color: #4f10b0;
+    color: white;
+}
+.pagination a.active {
+    cursor: default;
+}
