@@ -1,17 +1,23 @@
 <%- include('../components/header') %>
-    <form action="/admin/<%= editing ? 'product/edit/' + product.id : 'products' %>" method="post" class="product-form">
+    <form action="/admin/<%= editing ? 'product/edit/' + product.id : 'products' %>" method="post" class="product-form" enctype="multipart/form-data">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <h3><%= editing ? 'Edit' : 'Create' %> Product</h3>
         <%- include('../components/alert') %>
         <div class="form-control <%= errorMessage.find(e => e.param === 'title') ? 'error' : '' %>">
             <label for="title">Product Title</label>
-            <input type="text" id="title" name="title"
+            <input type="text" id="title" name="title" maxlength="100"
                    placeholder="Product title" value="<%= oldInput.title || product.title %>">
         </div>
         <div class="form-control <%= errorMessage.find(e => e.param === 'image') ? 'error' : '' %>">
-            <label for="image">Image URL</label>
+            <label for="image">Image</label>
+            <% if(editing && product.imageUrl) { %>
+                <p><%= product.imageUrl %></p>
+            <% } %>
+            <input type="file" name="image" id="image">
+            <!--
             <input type="url" id="image" name="image"
                    placeholder="Product image" value="<%= oldInput.image ||  product.imageUrl %>">
+                   -->
         </div>
         <div class="form-control <%= errorMessage.find(e => e.param === 'price') ? 'error' : '' %>">
             <label for="price">Price</label>

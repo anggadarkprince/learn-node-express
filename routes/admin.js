@@ -8,7 +8,6 @@ const productValidation = [
     check('title')
         .not().isEmpty().withMessage('Title is required')
         .isLength({min: 5, max: 100}).withMessage('Title between 5 until 100 characters'),
-    check('image', 'Image must be a URL and required').not().isEmpty().isURL().isLength({max: 500}),
     check('price', 'Price must be a number and required').not().isEmpty().isNumeric(),
     check('description').trim(),
 ];

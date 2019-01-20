@@ -5,7 +5,7 @@ const getAddProduct = (req, res) => {
     res.render('admin/form-product', {
         title: 'Create New Product',
         path: '/admin/products/add',
-        product: {id: '', title: '', imageUrl: '', price: '', description: ''},
+        product: {id: '', title: '', price: '', description: ''},
         editing: false,
         errorMessage: req.flash('error'),
         oldInput: {}
@@ -13,10 +13,22 @@ const getAddProduct = (req, res) => {
 };
 
 const postAddProduct = (req, res, next) => {
-    const {title, image: imageUrl, price, description} = req.body;
-
+    const {title, price, description} = req.body;
+    const image = req.file;
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+
+    if (!image) {
+        return res.status(422).render('admin/form-product', {
+            title: 'Create New Product',
+            path: '/admin/products/add',
+            product: {id: '', title: '', price: '', description: ''},
+            editing: false,
+            errorMessage: [{param: 'image', msg: 'Attached file is not an image'}],
+            oldInput: req.body
+        });
+    }
+
+    if (!errors.isEmpty()) {
         return res.status(422).render('admin/form-product', {
             title: 'Create New Product',
             path: '/admin/products/add',
@@ -27,6 +39,7 @@ const postAddProduct = (req, res, next) => {
         });
     }
 
+    const imageUrl = image.path;
     const product = new Product({title, imageUrl, price, description, userId: req.user._id});
     product.save()
         .then(result => {
@@ -40,7 +53,7 @@ const postAddProduct = (req, res, next) => {
         });
 };
 
-const getEditProduct = (req, res) => {
+const getEditProduct = (req, res, next) => {
     const id = req.params.productId;
     const editMode = req.query.edit;
     if (!editMode) {
@@ -48,7 +61,7 @@ const getEditProduct = (req, res) => {
     }
     Product.findOne({_id: id, userId: req.user._id})
         .then(product => {
-            if(!product) {
+            if (!product) {
                 req.flash('error', 'Product not found!');
                 return res.redirect('/admin/products')
             }
@@ -68,16 +81,28 @@ const getEditProduct = (req, res) => {
         });
 };
 
-const postEditProduct = (req, res) => {
+const postEditProduct = (req, res, next) => {
     const id = req.params.productId;
-    const {title, image, price, description} = req.body;
+    const {title, price, description} = req.body;
+    const image = req.file;
+
+    if (!image) {
+        return res.status(422).render('admin/form-product', {
+            title: 'Edit Product',
+            path: '/admin/products/add',
+            product: {id: '', title: '', price: '', description: ''},
+            editing: true,
+            errorMessage: [{param: 'image', msg: 'Attached file is not an image'}],
+            oldInput: req.body
+        });
+    }
 
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
         return res.status(422).render('admin/form-product', {
             title: 'Edit Product',
             path: '/admin/products',
-            product: {id: '', title: '', imageUrl: '', price: '', description: ''},
+            product: {id: '', title: '', price: '', description: ''},
             editing: true,
             errorMessage: errors.array(),
             oldInput: req.body
@@ -86,8 +111,10 @@ const postEditProduct = (req, res) => {
 
     Product.findOne({_id: id, userId: req.user._id})
         .then(product => {
+            if (image) {
+                product.imageUrl = image.path;
+            }
             product.title = title;
-            product.imageUrl = image;
             product.price = price;
             product.description = description;
             return product.save();
@@ -103,7 +130,7 @@ const postEditProduct = (req, res) => {
         });
 };
 
-const postDeleteProduct = (req, res) => {
+const postDeleteProduct = (req, res, next) => {
     const id = req.params.productId;
     Product.findOne({_id: id, userId: req.user._id})
         .then(product => product.remove())
@@ -117,7 +144,7 @@ const postDeleteProduct = (req, res) => {
         });
 }
 
-const getAllProducts = (req, res) => {
+const getAllProducts = (req, res, next) => {
     Product.find({userId: req.user._id})
         .select('_id title price imageUrl description')
         .populate('userId', 'name')
