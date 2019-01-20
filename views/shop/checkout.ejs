@@ -1,0 +1,29 @@
+<%- include('../components/header') %>
+
+<h3>Checkout</h3>
+<ul>
+    <% products.forEach(product => { %>
+    <li>
+        <h3><%= product.productId.title %></h3>
+        <p>
+            Amount: <%= product.quantity %> x $<%= product.productId.price %> =
+            <strong>$<%= product.quantity * product.productId.price %></strong>
+        </p>
+    </li>
+    <% }) %>
+</ul>
+<h2>Total: $<%= total %></h2>
+
+<form action="/create-order" method="POST">
+    <script
+            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+            data-key="pk_test_UOhM7QztQgQYlCSgB3AtLz9W"
+            data-amount="<%= total * 100 %>"
+            data-name="Your order"
+            data-description="All the items you ordered"
+            data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+            data-locale="auto">
+    </script>
+</form>
+
+<%- include('../components/footer') %>

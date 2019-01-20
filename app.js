@@ -12,6 +12,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
+const shopController = require('./controllers/shop');
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
@@ -50,7 +51,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'data', 'images')));
 app.use(session({secret: 'secret98sh968sdf7s8df6', resave: false, saveUninitialized: false, store: store}));
 app.use(flash());
-app.use(csrfProtection);
 
 app.use((req, res, next) => {
     console.log('Logging all request');
@@ -72,11 +72,18 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn;
+    next();
+});
+
+app.post('/create-order', authMiddleware, shopController.postOrders);
+app.get('/500', errorController.get500);
+
+app.use(csrfProtection);
+app.use((req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
     next();
-})
+});
 
-app.get('/500', errorController.get500);
 app.use('/admin', authMiddleware, adminRoutes);
 app.use(authRoutes);
 app.use(shopRoutes);

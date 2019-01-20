@@ -134,9 +134,23 @@ const getOrders = (req, res) => {
 };
 
 const postOrders = (req, res) => {
+    // Set your secret key: remember to change this to your live secret key in production
+    // See your keys here: https://dashboard.stripe.com/account/apikeys
+    var stripe = require("stripe")("sk_test_wBZMujgz7EqF4WZupchi6U74");
+
+    // Token is created using Checkout or Elements!
+    // Get the payment token ID submitted by the form:
+    const token = req.body.stripeToken; // Using Express
+
+    let total = 0;
+
     req.user.populate('cart.items.productId')
         .execPopulate()
         .then(user => {
+            user.cart.items.forEach(product => {
+                total += product.quantity * product.productId.price;
+            });
+
             const products = user.cart.items.map(i => {
                 return {quantity: i.quantity, product: {...i.productId._doc}};
             });
@@ -149,13 +163,39 @@ const postOrders = (req, res) => {
             })
             return order.save();
         })
-        .then(() => {
+        .then((result) => {
+            const charge = stripe.charges.create({
+                amount: total * 100,
+                currency: 'usd',
+                description: 'Charge order ' + result._id,
+                source: token,
+                metadata: {order_id: result._id.toString()}
+            });
             return req.user.clearCart();
         })
         .then(() => {
             res.redirect('/orders');
         })
         .catch(console.log);
+}
+
+const getCheckout = (req, res, next) => {
+    req.user.populate('cart.items.productId')
+        .execPopulate()
+        .then(user => {
+            const products = user.cart.items;
+            let total = 0;
+            products.forEach(product => {
+                total += product.quantity * product.productId.price;
+            });
+            res.render('shop/checkout', {
+                path: '/cart',
+                title: 'Checkout Your Cart',
+                products: products,
+                total: total
+            })
+        })
+        .catch(next);
 }
 
 const getInvoice = (req, res, next) => {
@@ -256,5 +296,6 @@ module.exports = {
     postCartDelete: postCartDelete,
     getOrders: getOrders,
     postOrders: postOrders,
+    getCheckout: getCheckout,
     getInvoice: getInvoice
 };
