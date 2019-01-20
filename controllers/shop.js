@@ -1,5 +1,8 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
+const fs = require('fs');
+const path = require('path');
+const PDFDocument = require('pdfkit');
 
 const getAllProducts = (req, res) => {
     Product.find()
@@ -113,6 +116,95 @@ const postOrders = (req, res) => {
         .catch(console.log);
 }
 
+const getInvoice = (req, res, next) => {
+    const orderId = req.params.orderId;
+    Order.findById(orderId)
+        .then(order => {
+            if (!order) {
+                return next(new Error('No order found'));
+            }
+            if (order.user.userId.toString() !== req.user._id.toString()) {
+                return next(new Error('Unauthorized'));
+            }
+
+            const invoiceName = 'invoice-' + orderId + '.pdf';
+            const invoicePath = path.join('data', 'invoices', invoiceName);
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+
+            if (fs.existsSync(invoicePath)) {
+                const currentTime = (new Date()).getTime();
+                const lastModified = fs.statSync(invoicePath).mtimeMs;
+                const diffTimeInSeconds = Math.round((currentTime - lastModified) / 1000);
+                if (diffTimeInSeconds < 300) { // 5 minutes expired
+                    console.log('Serve existing invoice - diffTime: ' + diffTimeInSeconds);
+                    // stream data for bigger file
+                    const file = fs.createReadStream(invoicePath);
+                    return file.pipe(res);
+                }
+
+                /* simple serve file
+                fs.readFile(invoicePath, (err, data) => {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.setHeader('Content-Type', 'application/pdf');
+                    res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+                    res.send(data);
+                });
+                */
+            }
+
+            console.log('Generate new invoice');
+            const pdfDoc = new PDFDocument();
+            pdfDoc.pipe(fs.createWriteStream(invoicePath));
+            pdfDoc.pipe(res);
+
+            pdfDoc.fontSize(20).text('Invoice ' + orderId, {
+                underline: true
+            }).moveDown();
+            pdfDoc.fontSize(14);
+
+            let total = 0;
+            let lastIndex = 0;
+            order.products.forEach((p, i) => {
+                lastIndex = i;
+                total += p.quantity * p.product.price;
+
+                pdfDoc.text(p.product.title, 70, 110 + (i * 30), {
+                    width: 200
+                });
+                pdfDoc.text(p.quantity, 300, 110 + (i * 30), {
+                    width: 50
+                });
+                pdfDoc.text('x', 350, 110 + (i * 30), {
+                    width: 50
+                });
+                pdfDoc.text('$' + p.product.price, 400, 110 + (i * 30), {
+                    width: 100
+                });
+            });
+            pdfDoc.moveDown();
+
+            const startBottom = 100 + ((lastIndex + 1) * 30);
+            pdfDoc.moveTo(70, startBottom)
+                .lineTo(500, startBottom)
+                .lineWidth(1)
+                .stroke();
+
+            pdfDoc.text('Total price', 70, 110 + ((lastIndex + 1) * 30), {
+                width: 100
+            });
+            pdfDoc.text('$' + total, 400, 110 + ((lastIndex + 1) * 30), {
+                width: 100
+            });
+
+            pdfDoc.end();
+        })
+        .catch(next);
+}
+
 module.exports = {
     getIndex: getIndex,
     getAllProducts: getAllProducts,
@@ -121,5 +213,6 @@ module.exports = {
     postCart: postCart,
     postCartDelete: postCartDelete,
     getOrders: getOrders,
-    postOrders: postOrders
+    postOrders: postOrders,
+    getInvoice: getInvoice
 };

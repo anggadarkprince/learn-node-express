@@ -25,7 +25,7 @@ const csrfProtection = csrf();
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, 'images');
+        callback(null, 'data/images');
     },
     filename: (req, file, callback) => {
         callback(null, (new Date()).toISOString() + '-' + file.originalname);
@@ -47,7 +47,7 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(multer({destination: 'images', storage: fileStorage, fileFilter: fileFilter}).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'data', 'images')));
 app.use(session({secret: 'secret98sh968sdf7s8df6', resave: false, saveUninitialized: false, store: store}));
 app.use(flash());
 app.use(csrfProtection);

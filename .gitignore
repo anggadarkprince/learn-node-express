@@ -3,5 +3,6 @@
 node_modules
 data/*
 !data/.gitkeep
-images
-!images/.gitkeep
+!data/db/.gitkeep
+!data/images/.gitkeep
+!data/invoices/.gitkeep
