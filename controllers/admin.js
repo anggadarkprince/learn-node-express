@@ -141,9 +141,15 @@ const postDeleteProduct = (req, res, next) => {
             return product.remove();
         })
         .then(result => {
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.status(200).json({result: result, message: 'Success!'});
+            }
             return res.redirect('/admin/products');
         })
         .catch((err) => {
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.status(500).json({message: 'Deleting product failed'});
+            }
             const error = new Error(err);
             error.httpStatusCode = 500;
             return next(error);
