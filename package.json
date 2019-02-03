@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Learn nodeJS",
   "main": "app.js",
+  "engines": {
+    "node": "v10.14.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "PORT=3000 MONGO_URI=mongodb://localhost:27017/shop-express STRIPE_KEY=sk_test_wBZMujgz7EqF4WZupchi6U74 node app.js",
