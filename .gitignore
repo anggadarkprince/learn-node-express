@@ -6,3 +6,6 @@ data/*
 !data/db/.gitkeep
 !data/images/.gitkeep
 !data/invoices/.gitkeep
+
+logs/*
+!logs/.gitkeep

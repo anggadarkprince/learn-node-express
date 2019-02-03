@@ -1,11 +1,17 @@
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+
 const express = require('express');
 const session = require('express-session');
 const flash = require('connect-flash');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const path = require('path');
 const csrf = require('csurf');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 
 const authMiddleware = require('./middleware/auth');
 const adminRoutes = require('./routes/admin');
@@ -16,13 +22,16 @@ const shopController = require('./controllers/shop');
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
-const MONGODB_URI = 'mongodb://localhost:27017/shop-express';
+const MONGODB_URI = process.env.MONGO_URI;
 const mongoose = require('mongoose');
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
 });
 const csrfProtection = csrf();
+
+const privateKey = fs.readFileSync('server.key');
+const certificate = fs.readFileSync('server.cert');
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, callback) => {
@@ -44,6 +53,12 @@ const fileFilter = (req, file, callback) => {
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs', 'access.log'), {'flags': 'a'});
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined', {stream: accessLogStream}));
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(multer({destination: 'images', storage: fileStorage, fileFilter: fileFilter}).single('image'));
@@ -99,7 +114,11 @@ app.use((error, req, res, next) => {
 mongoose.set('debug', true); // logging to console
 mongoose.connect(MONGODB_URI, {useNewUrlParser: true})
     .then(() => {
-        app.listen(3000);
+        /* https.createServer({
+            key: privateKey,
+            cert: certificate
+        }, app).listen(process.env.PORT || 3000); */
+        app.listen(process.env.PORT || 3000);
     })
     .catch(console.log);
 mongoose.Promise = Promise;

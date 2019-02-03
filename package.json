@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js --ignore './data/'",
+    "start": "PORT=3000 MONGO_URI=mongodb://localhost:27017/shop-express STRIPE_KEY=sk_test_wBZMujgz7EqF4WZupchi6U74 node app.js",
+    "start:dev": "nodemon app.js --ignore './data/'",
     "mongo-start": "./mongod"
   },
   "keywords": [
@@ -23,6 +24,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
     "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^2.0.6",
     "csurf": "^1.9.0",
@@ -30,7 +32,9 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "express-validator": "^5.3.1",
+    "helmet": "^3.15.0",
     "mongoose": "^5.4.3",
+    "morgan": "^1.9.1",
     "multer": "^1.4.1",
     "mysql2": "^1.6.4",
     "nodemailer": "^5.1.1",
